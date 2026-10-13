@@ -1,0 +1,145 @@
+### =========================================================================
+### Car Sharing API - HTTP Requests (Task #2 Protected with Basic Auth)
+### Base URL: http://localhost:8080
+### Credentials: admin / admin123 (or user / user123)
+### =========================================================================
+
+@baseUrl = http://localhost:8080
+@username = admin
+@password = admin123
+
+### =========================================================================
+### 10 HTTP Requests (0.5 points for each request = 5.0 points)
+### =========================================================================
+
+### Request 1: Get all users
+# Отримати список усіх користувачів (захищено Basic Auth)
+GET {{baseUrl}}/api/v1/users
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+###
+
+### Request 2: Get user by ID
+# Отримати користувача за ідентифікатором
+GET {{baseUrl}}/api/v1/users/1
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+###
+
+### Request 3: Create a new user
+# Створити нового користувача
+POST {{baseUrl}}/api/v1/users
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "id": "2",
+  "email": "marta.shevchenko@example.com",
+  "fullName": "Marta Shevchenko",
+  "driverLicense": "BX556677"
+}
+
+###
+
+### Request 4: Update user by ID
+# Оновити дані існуючого користувача
+PUT {{baseUrl}}/api/v1/users/1
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "id": "1",
+  "email": "john.updated@example.com",
+  "fullName": "John Doe Updated",
+  "driverLicense": "DL12345-NEW"
+}
+
+###
+
+### Request 5: Delete user by ID
+# Видалити користувача за ідентифікатором
+DELETE {{baseUrl}}/api/v1/users/2
+Authorization: Basic {{username}} {{password}}
+
+###
+
+### Request 6: Get all vehicles
+# Отримати список усіх транспортних засобів
+GET {{baseUrl}}/api/v1/vehicles
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+###
+
+### Request 7: Get vehicle by ID
+# Отримати транспортний засіб за ідентифікатором
+GET {{baseUrl}}/api/v1/vehicles/1
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+###
+
+### Request 8: Create a new vehicle
+# Додати новий транспортний засіб
+POST {{baseUrl}}/api/v1/vehicles
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "id": "3",
+  "brand": "Hyundai",
+  "model": "Ioniq 5",
+  "registrationNumber": "CE7788EE",
+  "fleetId": "1",
+  "rentedByUserId": null
+}
+
+###
+
+### Request 9: Rent a vehicle to user
+# Орендувати транспортний засіб для користувача
+POST {{baseUrl}}/api/v1/vehicles/1/rent?userId=1
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+###
+
+### Request 10: Get all fleets
+# Отримати список усіх автопарків
+GET {{baseUrl}}/api/v1/fleets
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+###
+
+### =========================================================================
+### Additional / Verification Requests
+### =========================================================================
+
+### Request 11: Get fleet by ID
+GET {{baseUrl}}/api/v1/fleets/1
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+###
+
+### Request 12: Create new fleet
+POST {{baseUrl}}/api/v1/fleets
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "id": "2",
+  "name": "North Station Fleet",
+  "address": "Heroiv Maydanu St. 15",
+  "capacity": 30
+}
+
+###
+
+### Request 13: Test Unauthenticated Request (Expect 401 Unauthorized)
+# Перевірка захисту: запит без заголовка авторизації повертає 401
+GET {{baseUrl}}/api/v1/users
+Accept: application/json
