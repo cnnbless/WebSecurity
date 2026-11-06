@@ -51,7 +51,7 @@ public class VehicleService {
 
     public Vehicle rentVehicle(String vehicleId, String userId) {
         Vehicle vehicle = getById(vehicleId);
-        if (vehicle != null && vehicle.getRentedByUserId() == null) {
+        if (vehicle != null) {
             vehicle.setRentedByUserId(userId);
             return vehicle;
         }

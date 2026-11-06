@@ -1,91 +1,53 @@
 ### =========================================================================
-### Car Sharing API - HTTP Requests (Task #2 Protected with Basic Auth)
-### Base URL: http://localhost:8080
-### Credentials: admin / admin123 (or user / user123)
+### Car Sharing API - Role-Based Access Control (Lecture 6)
+### 3 Users:
+###   1. user       / user123       (Role: USER)
+###   2. admin      / admin123      (Role: ADMIN)
+###   3. superadmin / superadmin123 (Role: SUPERADMIN)
 ### =========================================================================
 
 @baseUrl = http://localhost:8080
-@username = admin
-@password = admin123
 
-### =========================================================================
-### 10 HTTP Requests (0.5 points for each request = 5.0 points)
-### =========================================================================
-
-### Request 1: Get all users
-# Отримати список усіх користувачів (захищено Basic Auth)
-GET {{baseUrl}}/api/v1/users
-Authorization: Basic {{username}} {{password}}
-Accept: application/json
-
-###
-
-### Request 2: Get user by ID
-# Отримати користувача за ідентифікатором
-GET {{baseUrl}}/api/v1/users/1
-Authorization: Basic {{username}} {{password}}
-Accept: application/json
-
-###
-
-### Request 3: Create a new user
-# Створити нового користувача
-POST {{baseUrl}}/api/v1/users
-Authorization: Basic {{username}} {{password}}
-Content-Type: application/json
-
-{
-  "id": "2",
-  "email": "marta.shevchenko@example.com",
-  "fullName": "Marta Shevchenko",
-  "driverLicense": "BX556677"
-}
-
-###
-
-### Request 4: Update user by ID
-# Оновити дані існуючого користувача
-PUT {{baseUrl}}/api/v1/users/1
-Authorization: Basic {{username}} {{password}}
-Content-Type: application/json
-
-{
-  "id": "1",
-  "email": "john.updated@example.com",
-  "fullName": "John Doe Updated",
-  "driverLicense": "DL12345-NEW"
-}
-
-###
-
-### Request 5: Delete user by ID
-# Видалити користувача за ідентифікатором
-DELETE {{baseUrl}}/api/v1/users/2
-Authorization: Basic {{username}} {{password}}
-
-###
-
-### Request 6: Get all vehicles
-# Отримати список усіх транспортних засобів
+###1. [USER] GET all vehicles (Allowed for USER, ADMIN, SUPERADMIN -> 200 OK)
 GET {{baseUrl}}/api/v1/vehicles
-Authorization: Basic {{username}} {{password}}
+Authorization: Basic user user123
 Accept: application/json
 
 ###
 
-### Request 7: Get vehicle by ID
-# Отримати транспортний засіб за ідентифікатором
+###2. [USER] GET vehicle by ID (Allowed for USER, ADMIN, SUPERADMIN -> 200 OK)
 GET {{baseUrl}}/api/v1/vehicles/1
-Authorization: Basic {{username}} {{password}}
+Authorization: Basic user user123
 Accept: application/json
 
 ###
 
-### Request 8: Create a new vehicle
-# Додати новий транспортний засіб
+###3. [USER] GET all fleets (Allowed for USER, ADMIN, SUPERADMIN -> 200 OK)
+GET {{baseUrl}}/api/v1/fleets
+Authorization: Basic user user123
+Accept: application/json
+
+###
+
+###4. [USER] POST rent a vehicle (Allowed for USER, ADMIN, SUPERADMIN -> 200 OK)
+POST {{baseUrl}}/api/v1/vehicles/1/rent?userId=1
+Authorization: Basic user user123
+Accept: application/json
+
+###
+
+###5. [ADMIN] GET all users (Allowed for ADMIN, SUPERADMIN -> 200 OK)
+GET {{baseUrl}}/api/v1/users
+Authorization: Basic admin admin123
+Accept: application/json
+
+###
+
+###6. [ADMIN] POST create a new vehicle (Allowed for ADMIN, SUPERADMIN -> 200 OK)
 POST {{baseUrl}}/api/v1/vehicles
-Authorization: Basic {{username}} {{password}}
+Authorization: Basic admin admin123
 Content-Type: application/json
+Accept: application/json
 
 {
   "id": "3",
@@ -98,48 +60,79 @@ Content-Type: application/json
 
 ###
 
-### Request 9: Rent a vehicle to user
-# Орендувати транспортний засіб для користувача
-POST {{baseUrl}}/api/v1/vehicles/1/rent?userId=1
-Authorization: Basic {{username}} {{password}}
-Accept: application/json
-
-###
-
-### Request 10: Get all fleets
-# Отримати список усіх автопарків
-GET {{baseUrl}}/api/v1/fleets
-Authorization: Basic {{username}} {{password}}
-Accept: application/json
-
-###
-
-### =========================================================================
-### Additional / Verification Requests
-### =========================================================================
-
-### Request 11: Get fleet by ID
-GET {{baseUrl}}/api/v1/fleets/1
-Authorization: Basic {{username}} {{password}}
-Accept: application/json
-
-###
-
-### Request 12: Create new fleet
-POST {{baseUrl}}/api/v1/fleets
-Authorization: Basic {{username}} {{password}}
+###7. [ADMIN] PUT update vehicle by ID (Allowed for ADMIN, SUPERADMIN -> 200 OK)
+PUT {{baseUrl}}/api/v1/vehicles/3
+Authorization: Basic admin admin123
 Content-Type: application/json
+Accept: application/json
 
 {
-  "id": "2",
-  "name": "North Station Fleet",
-  "address": "Heroiv Maydanu St. 15",
-  "capacity": 30
+  "id": "3",
+  "brand": "Hyundai",
+  "model": "Ioniq 6",
+  "registrationNumber": "CE7788EE",
+  "fleetId": "1",
+  "rentedByUserId": null
 }
 
 ###
 
-### Request 13: Test Unauthenticated Request (Expect 401 Unauthorized)
-# Перевірка захисту: запит без заголовка авторизації повертає 401
+###8. [SUPERADMIN] POST create a new user (Allowed ONLY for SUPERADMIN -> 200 OK)
+POST {{baseUrl}}/api/v1/users
+Authorization: Basic superadmin superadmin123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "2",
+  "email": "marta.shevchenko@example.com",
+  "fullName": "Marta Shevchenko",
+  "driverLicense": "BX556677"
+}
+
+###
+
+###9. [SUPERADMIN] PUT update user by ID (Allowed ONLY for SUPERADMIN -> 200 OK)
+PUT {{baseUrl}}/api/v1/users/2
+Authorization: Basic superadmin superadmin123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "2",
+  "email": "marta.updated@example.com",
+  "fullName": "Marta Shevchenko Updated",
+  "driverLicense": "BX556677-NEW"
+}
+
+###
+
+###10. [SUPERADMIN] DELETE user by ID (Allowed ONLY for SUPERADMIN -> 200 OK)
+DELETE {{baseUrl}}/api/v1/users/2
+Authorization: Basic superadmin superadmin123
+Accept: application/json
+
+###
+
+### =========================================================================
+### Access Restriction Negative Checks (403 Forbidden)
+### =========================================================================
+
+###11. [USER -> 403 Forbidden] USER cannot view users list
 GET {{baseUrl}}/api/v1/users
+Authorization: Basic user user123
+Accept: application/json
+
+###
+
+###12. [USER -> 403 Forbidden] USER cannot delete vehicles
+DELETE {{baseUrl}}/api/v1/vehicles/1
+Authorization: Basic user user123
+Accept: application/json
+
+###
+
+###13. [ADMIN -> 403 Forbidden] ADMIN cannot delete users (SUPERADMIN only)
+DELETE {{baseUrl}}/api/v1/users/1
+Authorization: Basic admin admin123
 Accept: application/json
