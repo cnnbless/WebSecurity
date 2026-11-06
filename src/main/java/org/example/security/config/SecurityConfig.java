@@ -10,8 +10,8 @@ package org.example.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,6 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -32,28 +33,6 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints accessible by USER, ADMIN, SUPERADMIN
-                        .requestMatchers(HttpMethod.GET, "/api/v1/vehicles/**", "/api/v1/fleets/**")
-                        .hasAnyRole("USER", "ADMIN", "SUPERADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/vehicles/*/rent")
-                        .hasAnyRole("USER", "ADMIN", "SUPERADMIN")
-
-                        // Endpoints accessible by ADMIN and SUPERADMIN
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**")
-                        .hasAnyRole("ADMIN", "SUPERADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/vehicles/**", "/api/v1/fleets/**")
-                        .hasAnyRole("ADMIN", "SUPERADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**", "/api/v1/fleets/**")
-                        .hasAnyRole("ADMIN", "SUPERADMIN")
-
-                        // Endpoints accessible ONLY by SUPERADMIN
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/**")
-                        .hasRole("SUPERADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/**")
-                        .hasRole("SUPERADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**")
-                        .hasRole("SUPERADMIN")
-
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
