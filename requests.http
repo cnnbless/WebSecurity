@@ -1,6 +1,6 @@
 ### =========================================================================
-### Car Sharing API - Role-Based Access Control (Lecture 6)
-### 3 Users:
+### Car Sharing API - Task #6: Method Security Annotations (@PreAuthorize)
+### 10 HTTP Requests for Annotated Routes via Different Users
 ###   1. user       / user123       (Role: USER)
 ###   2. admin      / admin123      (Role: ADMIN)
 ###   3. superadmin / superadmin123 (Role: SUPERADMIN)
@@ -8,42 +8,65 @@
 
 @baseUrl = http://localhost:8080
 
-###1. [USER] GET all vehicles (Allowed for USER, ADMIN, SUPERADMIN -> 200 OK)
+###1. [USER] GET all vehicles (@PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPERADMIN')"))
 GET {{baseUrl}}/api/v1/vehicles
 Authorization: Basic user user123
 Accept: application/json
 
 ###
 
-###2. [USER] GET vehicle by ID (Allowed for USER, ADMIN, SUPERADMIN -> 200 OK)
-GET {{baseUrl}}/api/v1/vehicles/1
+###2. [USER] GET fleet by ID (@PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPERADMIN')"))
+GET {{baseUrl}}/api/v1/fleets/1
 Authorization: Basic user user123
 Accept: application/json
 
 ###
 
-###3. [USER] GET all fleets (Allowed for USER, ADMIN, SUPERADMIN -> 200 OK)
-GET {{baseUrl}}/api/v1/fleets
-Authorization: Basic user user123
-Accept: application/json
-
-###
-
-###4. [USER] POST rent a vehicle (Allowed for USER, ADMIN, SUPERADMIN -> 200 OK)
+###3. [USER] POST rent vehicle (@PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPERADMIN')"))
 POST {{baseUrl}}/api/v1/vehicles/1/rent?userId=1
 Authorization: Basic user user123
 Accept: application/json
 
 ###
 
-###5. [ADMIN] GET all users (Allowed for ADMIN, SUPERADMIN -> 200 OK)
+###4. [ADMIN] GET all users (@PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')"))
 GET {{baseUrl}}/api/v1/users
 Authorization: Basic admin admin123
 Accept: application/json
 
 ###
 
-###6. [ADMIN] POST create a new vehicle (Allowed for ADMIN, SUPERADMIN -> 200 OK)
+###5. [ADMIN] POST create fleet (@PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')"))
+POST {{baseUrl}}/api/v1/fleets
+Authorization: Basic admin admin123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "2",
+  "name": "North Station Fleet",
+  "address": "Heroiv Maydanu St. 15",
+  "capacity": 30
+}
+
+###
+
+###6. [ADMIN] PUT update fleet (@PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')"))
+PUT {{baseUrl}}/api/v1/fleets/2
+Authorization: Basic admin admin123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "2",
+  "name": "North Station Fleet Updated",
+  "address": "Heroiv Maydanu St. 15A",
+  "capacity": 40
+}
+
+###
+
+###7. [ADMIN] POST create vehicle (@PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')"))
 POST {{baseUrl}}/api/v1/vehicles
 Authorization: Basic admin admin123
 Content-Type: application/json
@@ -54,30 +77,13 @@ Accept: application/json
   "brand": "Hyundai",
   "model": "Ioniq 5",
   "registrationNumber": "CE7788EE",
-  "fleetId": "1",
+  "fleetId": "2",
   "rentedByUserId": null
 }
 
 ###
 
-###7. [ADMIN] PUT update vehicle by ID (Allowed for ADMIN, SUPERADMIN -> 200 OK)
-PUT {{baseUrl}}/api/v1/vehicles/3
-Authorization: Basic admin admin123
-Content-Type: application/json
-Accept: application/json
-
-{
-  "id": "3",
-  "brand": "Hyundai",
-  "model": "Ioniq 6",
-  "registrationNumber": "CE7788EE",
-  "fleetId": "1",
-  "rentedByUserId": null
-}
-
-###
-
-###8. [SUPERADMIN] POST create a new user (Allowed ONLY for SUPERADMIN -> 200 OK)
+###8. [SUPERADMIN] POST create user (@PreAuthorize("hasRole('SUPERADMIN')"))
 POST {{baseUrl}}/api/v1/users
 Authorization: Basic superadmin superadmin123
 Content-Type: application/json
@@ -85,14 +91,14 @@ Accept: application/json
 
 {
   "id": "2",
-  "email": "marta.shevchenko@example.com",
-  "fullName": "Marta Shevchenko",
-  "driverLicense": "BX556677"
+  "email": "taras.koval@example.com",
+  "fullName": "Taras Koval",
+  "driverLicense": "CE998877"
 }
 
 ###
 
-###9. [SUPERADMIN] PUT update user by ID (Allowed ONLY for SUPERADMIN -> 200 OK)
+###9. [SUPERADMIN] PUT update user (@PreAuthorize("hasRole('SUPERADMIN')"))
 PUT {{baseUrl}}/api/v1/users/2
 Authorization: Basic superadmin superadmin123
 Content-Type: application/json
@@ -100,39 +106,32 @@ Accept: application/json
 
 {
   "id": "2",
-  "email": "marta.updated@example.com",
-  "fullName": "Marta Shevchenko Updated",
-  "driverLicense": "BX556677-NEW"
+  "email": "taras.koval.updated@example.com",
+  "fullName": "Taras Koval Updated",
+  "driverLicense": "CE998877-UPD"
 }
 
 ###
 
-###10. [SUPERADMIN] DELETE user by ID (Allowed ONLY for SUPERADMIN -> 200 OK)
-DELETE {{baseUrl}}/api/v1/users/2
+###10. [SUPERADMIN] DELETE vehicle (@PreAuthorize("hasRole('SUPERADMIN')"))
+DELETE {{baseUrl}}/api/v1/vehicles/3
 Authorization: Basic superadmin superadmin123
 Accept: application/json
 
 ###
 
 ### =========================================================================
-### Access Restriction Negative Checks (403 Forbidden)
+### Negative Checks on Annotated Routes (403 Forbidden)
 ### =========================================================================
 
-###11. [USER -> 403 Forbidden] USER cannot view users list
+###11. [USER -> 403 Forbidden] USER cannot access @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
 GET {{baseUrl}}/api/v1/users
 Authorization: Basic user user123
 Accept: application/json
 
 ###
 
-###12. [USER -> 403 Forbidden] USER cannot delete vehicles
-DELETE {{baseUrl}}/api/v1/vehicles/1
-Authorization: Basic user user123
-Accept: application/json
-
-###
-
-###13. [ADMIN -> 403 Forbidden] ADMIN cannot delete users (SUPERADMIN only)
-DELETE {{baseUrl}}/api/v1/users/1
+###12. [ADMIN -> 403 Forbidden] ADMIN cannot access @PreAuthorize("hasRole('SUPERADMIN')")
+DELETE {{baseUrl}}/api/v1/fleets/2
 Authorization: Basic admin admin123
 Accept: application/json

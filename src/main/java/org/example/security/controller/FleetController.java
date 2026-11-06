@@ -11,6 +11,7 @@ package org.example.security.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.security.model.Fleet;
 import org.example.security.service.FleetService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -21,17 +22,22 @@ public class FleetController {
     private final FleetService fleetService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPERADMIN')")
     public List<Fleet> getAllFleets() { return fleetService.getAll(); }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPERADMIN')")
     public Fleet getFleetById(@PathVariable String id) { return fleetService.getById(id); }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     public Fleet createFleet(@RequestBody Fleet fleet) { return fleetService.create(fleet); }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     public Fleet updateFleet(@PathVariable String id, @RequestBody Fleet fleet) { return fleetService.update(id, fleet); }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SUPERADMIN')")
     public void deleteFleet(@PathVariable String id) { fleetService.delete(id); }
 }
