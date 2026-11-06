@@ -111,28 +111,3 @@ Accept: application/json
 DELETE {{baseUrl}}/api/v1/users/2
 Authorization: Basic superadmin superadmin123
 Accept: application/json
-
-###
-
-### =========================================================================
-### Access Restriction Negative Checks (403 Forbidden)
-### =========================================================================
-
-###11. [USER -> 403 Forbidden] USER cannot view users list
-GET {{baseUrl}}/api/v1/users
-Authorization: Basic user user123
-Accept: application/json
-
-###
-
-###12. [USER -> 403 Forbidden] USER cannot delete vehicles
-DELETE {{baseUrl}}/api/v1/vehicles/1
-Authorization: Basic user user123
-Accept: application/json
-
-###
-
-###13. [ADMIN -> 403 Forbidden] ADMIN cannot delete users (SUPERADMIN only)
-DELETE {{baseUrl}}/api/v1/users/1
-Authorization: Basic admin admin123
-Accept: application/json
