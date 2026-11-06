@@ -1,0 +1,52 @@
+###1. GET All vehicles (show all)
+GET http://localhost:8080/api/v1/vehicles
+Authorization: Basic admin admin123
+Accept: application/json
+
+###
+
+###2. GET one vehicle by ID (read one)
+GET http://localhost:8080/api/v1/vehicles/1
+Authorization: Basic admin admin123
+Accept: application/json
+
+###
+
+###3. POST create a new vehicle (create one)
+POST http://localhost:8080/api/v1/vehicles
+Authorization: Basic admin admin123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "3",
+  "brand": "Hyundai",
+  "model": "Ioniq 5",
+  "registrationNumber": "CE7788EE",
+  "fleetId": "1",
+  "rentedByUserId": null
+}
+
+###
+
+###4. PUT update an existing vehicle (update one)
+PUT http://localhost:8080/api/v1/vehicles/3
+Authorization: Basic admin admin123
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "3",
+  "brand": "Hyundai",
+  "model": "Ioniq 6",
+  "registrationNumber": "CE7788EE",
+  "fleetId": "1",
+  "rentedByUserId": "1"
+}
+
+###
+
+###5. DELETE vehicle by ID (delete one)
+DELETE http://localhost:8080/api/v1/vehicles/3
+Authorization: Basic admin admin123
+Accept: application/json
