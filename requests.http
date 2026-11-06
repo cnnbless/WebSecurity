@@ -117,21 +117,3 @@ Accept: application/json
 DELETE {{baseUrl}}/api/v1/vehicles/3
 Authorization: Basic superadmin superadmin123
 Accept: application/json
-
-###
-
-### =========================================================================
-### Negative Checks on Annotated Routes (403 Forbidden)
-### =========================================================================
-
-###11. [USER -> 403 Forbidden] USER cannot access @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
-GET {{baseUrl}}/api/v1/users
-Authorization: Basic user user123
-Accept: application/json
-
-###
-
-###12. [ADMIN -> 403 Forbidden] ADMIN cannot access @PreAuthorize("hasRole('SUPERADMIN')")
-DELETE {{baseUrl}}/api/v1/fleets/2
-Authorization: Basic admin admin123
-Accept: application/json
